@@ -1,0 +1,101 @@
+<!-- 在<head>部分引入必要的CSS和JS库，如Font Awesome用于图标，jQuery和Vue.js（如果需要） -->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
+    <!-- ...其他样式和脚本引用... -->  
+    <script src="vue2_01.js"></script>
+    <!-- 在<body>部分更新游戏界面 -->  
+    <div id="app">  
+        <div class="game-container">  
+            <h1>猜数游戏</h1>  
+            <input type="number" min="1" max="100" v-model.number="guessed" placeholder="请输入1到100之间的整数" />  
+            <button @click="checkGuess">提交</button>  
+            <button @click="resetGame">重置</button>  
+            <p>{{ result }}</p>  
+            <p>尝试次数: {{ attempts }}</p>  
+            <p v-if="timeTaken > 0">用时: {{ timeTaken }} 秒</p>  
+            <!-- 可以添加更多元素，如排行榜、难度选择器等 -->  
+        </div>  
+    </div>  
+      
+    <script>  
+    let vm = new Vue({  
+        el: "#app",  
+        data: {  
+            guessed: null,  
+            key: 0,  
+            result: '',  
+            attempts: 0,  
+            startTime: null,  
+            timeTaken: 0  
+        },  
+        methods: {  
+            setKey() {  
+                this.key = Math.floor(Math.random() * 100) + 1;  
+            },  
+            checkGuess() {  
+                if (isNaN(this.guessed) || this.guessed < 1 || this.guessed > 100) {  
+                    this.result = '请输入一个有效的整数（1-100）！';  
+                    return;  
+                }  
+                this.attempts++;  
+                if (!this.startTime) {  
+                    this.startTime = Date.now();  
+                }  
+                if (this.guessed === this.key) {  
+                    this.timeTaken = (Date.now() - this.startTime) / 1000;  
+                    this.result = '祝贺你，你猜对了！';  
+                    this.setKey(); // 重新生成一个新的数字让用户继续猜（或重置游戏）  
+                } else if (this.guessed > this.key) {  
+                    this.result = '太大了，往小一点猜 ';  
+                } else {  
+                    this.result = '太小了，往大一点猜 ';  
+                }  
+            },  
+            resetGame() {  
+                this.guessed = null;  
+                this.result = '';  
+                this.attempts = 0;  
+                this.startTime = null;  
+                this.timeTaken = 0;  
+                this.setKey();  
+            }  
+        },  
+        mounted() {  
+            this.setKey();  
+        }  
+    });  
+    </script>  
+      
+    <!-- 在<style>部分添加样式 -->  
+    <style>  
+    .game-container {  
+        width: 300px;  
+        margin: 0 auto;  
+        padding: 20px;  
+        border: 1px solid #ccc;  
+        border-radius: 10px;  
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
+        text-align: center;  
+    }  
+    input {  
+        width: 80%;  
+        padding: 10px;  
+        margin-bottom: 10px;  
+        border: 1px solid #999;  
+        border-radius: 5px;  
+    }  
+    button {  
+        padding: 10px 20px;  
+        margin: 5px;  
+        border: none;  
+        border-radius: 5px;  
+        background-color: #007BFF;  
+        color: white;  
+        cursor: pointer;  
+    }  
+    button:hover {  
+        background-color: #0056b3;  
+    }  
+    p {  
+        margin: 10px 0;  
+    }  
+    </style>
